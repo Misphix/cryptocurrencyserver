@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -42,7 +43,12 @@ type Response struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c *CoinMarketCap) GetLatestPrice() float32 {
+func (c *CoinMarketCap) GetLatestPrice(currency Currency) float32 {
+	currencyID := map[Currency]int{
+		Usd: 2781,
+		Twd: 2811,
+	}[currency]
+
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest", nil)
 	if err != nil {
@@ -52,6 +58,7 @@ func (c *CoinMarketCap) GetLatestPrice() float32 {
 
 	q := url.Values{}
 	q.Add("id", "1")
+	q.Add("convert_id", strconv.Itoa(currencyID))
 
 	request.Header.Set("Accepts", "application/json")
 	request.Header.Add("X-CMC_PRO_API_KEY", c.APIKey)
@@ -70,5 +77,5 @@ func (c *CoinMarketCap) GetLatestPrice() float32 {
 		// TODO error handling
 	}
 
-	return response.Data["1"].Quote["USD"].Price
+	return response.Data["1"].Quote[strconv.Itoa(currencyID)].Price
 }

@@ -10,12 +10,8 @@ import (
 type CoinGecko struct {
 }
 
-type CoinGeckoReponse struct {
-	Bitcoin map[string]float32
-}
-
 // GetLatestPrice will get latest BTC price with USD
-func (c *CoinGecko) GetLatestPrice() float32 {
+func (c *CoinGecko) GetLatestPrice(currency Currency) float32 {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", "https://api.coingecko.com/api/v3/simple/price", nil)
 	if err != nil {
@@ -25,7 +21,7 @@ func (c *CoinGecko) GetLatestPrice() float32 {
 
 	q := url.Values{}
 	q.Add("ids", "bitcoin")
-	q.Add("vs_currencies", "usd")
+	q.Add("vs_currencies", string(currency))
 
 	request.Header.Set("Accepts", "application/json")
 	request.URL.RawQuery = q.Encode()
@@ -36,8 +32,8 @@ func (c *CoinGecko) GetLatestPrice() float32 {
 		// TODO error handling
 	}
 
-	var response CoinGeckoReponse
-	err = json.NewDecoder(r.Body).Decode(&response)
+	var response map[string]map[string]float32
+	json.NewDecoder(r.Body).Decode(&response)
 
-	return response.Bitcoin["usd"]
+	return response["bitcoin"][string(currency)]
 }
