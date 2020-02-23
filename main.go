@@ -26,19 +26,19 @@ func queryPrice(context *gin.Context) {
 		currency = apiprovider.Usd
 	}
 
-	var price float32
+	var provider apiprovider.APIProvider
 	switch p := context.Query("provider"); p {
 	case "CoinMarketCap":
 		token := "1cc823b9-41de-49ec-9f93-33d16ebf1860"
-		coinMarketCap := apiprovider.CoinMarketCap{APIKey: token}
-		price = coinMarketCap.GetLatestPrice(currency)
+		provider = apiprovider.CoinMarketCap{APIKey: token}
+
 	case "CoinGecko":
 		fallthrough
 	default:
-		coinGecko := apiprovider.CoinGecko{}
-		price = coinGecko.GetLatestPrice(currency)
+		provider = apiprovider.CoinGecko{}
 	}
 
+	price := provider.GetLatestPrice(currency)
 	context.JSON(200, gin.H{
 		"BTC": price,
 	})

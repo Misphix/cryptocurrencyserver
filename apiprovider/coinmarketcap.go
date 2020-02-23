@@ -43,7 +43,7 @@ type Response struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c *CoinMarketCap) GetLatestPrice(currency Currency) float32 {
+func (c CoinMarketCap) GetLatestPrice(currency Currency) float32 {
 	currencyID := map[Currency]int{
 		Usd: 2781,
 		Twd: 2811,

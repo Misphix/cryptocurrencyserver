@@ -7,11 +7,12 @@ import (
 	"net/url"
 )
 
+// CoinGecko will set the basic data of CoinGecko needs
 type CoinGecko struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c *CoinGecko) GetLatestPrice(currency Currency) float32 {
+func (c CoinGecko) GetLatestPrice(currency Currency) float32 {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", "https://api.coingecko.com/api/v3/simple/price", nil)
 	if err != nil {
