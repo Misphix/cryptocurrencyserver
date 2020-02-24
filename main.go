@@ -5,7 +5,13 @@ import (
 	"github.com/misphix/cryptocurrencyserver/apiprovider"
 )
 
+var providers = make(map[string]apiprovider.APIProvider)
+var currencies = make(map[string]apiprovider.Currency)
+
 func main() {
+	config := ReadConfig()
+	initializeParametersMap(config)
+
 	router := gin.Default()
 	v1 := router.Group("/api/v1/cryptocurrency/")
 	{
@@ -14,32 +20,38 @@ func main() {
 	router.Run()
 }
 
+func initializeParametersMap(config Config) {
+	// Initialize provider map
+	providers["CoinMarketCap"] = apiprovider.CoinMarketCap{APIKey: config.CoinMarketCapKey}
+	coinGecko := apiprovider.CoinGecko{}
+	providers["CoinGecko"] = coinGecko
+	providers[""] = coinGecko
+
+	// Initialize currencies map
+	currencies["twd"] = apiprovider.Twd
+	currencies["usd"] = apiprovider.Usd
+	currencies[""] = apiprovider.Usd
+}
+
 func queryPrice(context *gin.Context) {
-
-	var currency apiprovider.Currency
-	switch c := context.Query("currency"); c {
-	case "twd":
-		currency = apiprovider.Twd
-	case "usd":
-		fallthrough
-	default:
-		currency = apiprovider.Usd
+	currency, ok := currencies[context.Query("currency")]
+	if !ok {
+		context.JSON(200, gin.H{
+			"error": "Wrong currency parameter",
+		})
+		return
 	}
 
-	var provider apiprovider.APIProvider
-	switch p := context.Query("provider"); p {
-	case "CoinMarketCap":
-		token := "1cc823b9-41de-49ec-9f93-33d16ebf1860"
-		provider = apiprovider.CoinMarketCap{APIKey: token}
-
-	case "CoinGecko":
-		fallthrough
-	default:
-		provider = apiprovider.CoinGecko{}
+	provider, ok := providers[context.Query("provider")]
+	if ok {
+		price := provider.GetLatestPrice(currency)
+		context.JSON(200, gin.H{
+			"BTC": price,
+		})
+	} else {
+		context.JSON(200, gin.H{
+			"error": "Wrong provider parameter",
+		})
+		return
 	}
-
-	price := provider.GetLatestPrice(currency)
-	context.JSON(200, gin.H{
-		"BTC": price,
-	})
 }
