@@ -3,13 +3,14 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/misphix/cryptocurrencyserver/apiprovider"
+	"github.com/misphix/cryptocurrencyserver/configreader"
 )
 
 var providers = make(map[string]apiprovider.APIProvider)
 var currencies = make(map[string]apiprovider.Currency)
 
 func main() {
-	config := ReadConfig()
+	config := configreader.ReadConfig()
 	initializeParametersMap(config)
 
 	router := gin.Default()
@@ -20,7 +21,7 @@ func main() {
 	router.Run()
 }
 
-func initializeParametersMap(config Config) {
+func initializeParametersMap(config configreader.Config) {
 	// Initialize provider map
 	providers["CoinMarketCap"] = apiprovider.CoinMarketCap{APIKey: config.CoinMarketCapKey}
 	coinGecko := apiprovider.CoinGecko{}
