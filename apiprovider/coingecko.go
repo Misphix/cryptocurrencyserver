@@ -7,14 +7,17 @@ import (
 	"net/url"
 )
 
+// CoinGeckoURL is url of CoinGecko
+const CoinGeckoURL = "https://api.coingecko.com/api/v3/simple/price"
+
 // CoinGecko will set the basic data of CoinGecko needs
 type CoinGecko struct {
+	URL string
 }
 
 // GetLatestPrice will get latest BTC price with USD
 func (c CoinGecko) GetLatestPrice(currency Currency) float32 {
-	client := &http.Client{}
-	request, err := http.NewRequest("GET", "https://api.coingecko.com/api/v3/simple/price", nil)
+	request, err := http.NewRequest("GET", c.URL, nil)
 	if err != nil {
 		log.Print(err)
 		// TODO error handling
@@ -27,6 +30,7 @@ func (c CoinGecko) GetLatestPrice(currency Currency) float32 {
 	request.Header.Set("Accepts", "application/json")
 	request.URL.RawQuery = q.Encode()
 
+	client := &http.Client{}
 	r, err := client.Do(request)
 	if err != nil {
 		log.Print(err)

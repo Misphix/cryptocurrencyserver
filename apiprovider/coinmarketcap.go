@@ -10,8 +10,12 @@ import (
 	"time"
 )
 
+// CoinMarketCapURL is url of CoinMarketCap
+const CoinMarketCapURL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+
 // CoinMarketCap will set the basic data of CoinMarketCap needs
 type CoinMarketCap struct {
+	URL    string
 	APIKey string
 }
 
@@ -49,8 +53,7 @@ func (c CoinMarketCap) GetLatestPrice(currency Currency) float32 {
 		Twd: 2811,
 	}[currency]
 
-	client := &http.Client{}
-	request, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest", nil)
+	request, err := http.NewRequest("GET", c.URL, nil)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -64,6 +67,7 @@ func (c CoinMarketCap) GetLatestPrice(currency Currency) float32 {
 	request.Header.Add("X-CMC_PRO_API_KEY", c.APIKey)
 	request.URL.RawQuery = q.Encode()
 
+	client := &http.Client{}
 	r, err := client.Do(request)
 	if err != nil {
 		log.Print(err)

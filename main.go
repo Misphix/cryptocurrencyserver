@@ -23,8 +23,8 @@ func main() {
 
 func initializeParametersMap(config configreader.Config) {
 	// Initialize provider map
-	providers["CoinMarketCap"] = apiprovider.CoinMarketCap{APIKey: config.CoinMarketCapKey}
-	coinGecko := apiprovider.CoinGecko{}
+	providers["CoinMarketCap"] = apiprovider.CoinMarketCap{URL: apiprovider.CoinMarketCapURL, APIKey: config.CoinMarketCapKey}
+	coinGecko := apiprovider.CoinGecko{URL: apiprovider.CoinGeckoURL}
 	providers["CoinGecko"] = coinGecko
 	providers[""] = coinGecko
 
