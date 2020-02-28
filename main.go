@@ -45,7 +45,12 @@ func queryPrice(context *gin.Context) {
 
 	provider, ok := providers[context.Query("provider")]
 	if ok {
-		price := provider.GetLatestPrice(currency)
+		price, err := provider.GetLatestPrice(currency)
+
+		if err != nil {
+			// TODO get last time value
+		}
+
 		context.JSON(200, gin.H{
 			"BTC": price,
 		})

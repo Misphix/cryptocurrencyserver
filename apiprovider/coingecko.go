@@ -2,7 +2,7 @@ package apiprovider
 
 import (
 	"encoding/json"
-	"log"
+	"errors"
 	"net/http"
 	"net/url"
 )
@@ -16,11 +16,10 @@ type CoinGecko struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c CoinGecko) GetLatestPrice(currency Currency) float32 {
+func (c CoinGecko) GetLatestPrice(currency Currency) (float64, error) {
 	request, err := http.NewRequest("GET", c.URL, nil)
 	if err != nil {
-		log.Print(err)
-		// TODO error handling
+		return 0, err
 	}
 
 	q := url.Values{}
@@ -33,12 +32,15 @@ func (c CoinGecko) GetLatestPrice(currency Currency) float32 {
 	client := &http.Client{}
 	r, err := client.Do(request)
 	if err != nil {
-		log.Print(err)
-		// TODO error handling
+		return 0, err
 	}
 
-	var response map[string]map[string]float32
+	if r.StatusCode != 200 {
+		return 0, errors.New(r.Status)
+	}
+
+	var response map[string]map[string]float64
 	json.NewDecoder(r.Body).Decode(&response)
 
-	return response["bitcoin"][string(currency)]
+	return response["bitcoin"][string(currency)], nil
 }

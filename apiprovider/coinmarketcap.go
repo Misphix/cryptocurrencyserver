@@ -21,8 +21,8 @@ type CoinMarketCap struct {
 
 // Quote represent cryptocurreny's value of a specific currency
 type Quote struct {
-	Price     float32
-	Volume24h float32 `json:"volume_24h"`
+	Price     float64
+	Volume24h float64 `json:"volume_24h"`
 }
 
 // Data represent a cryptocurrency status
@@ -47,7 +47,7 @@ type Response struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c CoinMarketCap) GetLatestPrice(currency Currency) float32 {
+func (c CoinMarketCap) GetLatestPrice(currency Currency) (float64, error) {
 	currencyID := map[Currency]int{
 		Usd: 2781,
 		Twd: 2811,
@@ -70,16 +70,14 @@ func (c CoinMarketCap) GetLatestPrice(currency Currency) float32 {
 	client := &http.Client{}
 	r, err := client.Do(request)
 	if err != nil {
-		log.Print(err)
-		// TODO error handling
+		return 0, err
 	}
 
 	var response Response
 	err = json.NewDecoder(r.Body).Decode(&response)
 	if err != nil {
-		log.Print(err)
-		// TODO error handling
+		return 0, err
 	}
 
-	return response.Data["1"].Quote[strconv.Itoa(currencyID)].Price
+	return response.Data["1"].Quote[strconv.Itoa(currencyID)].Price, nil
 }
