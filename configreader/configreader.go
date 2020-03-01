@@ -2,6 +2,8 @@ package configreader
 
 import (
 	"fmt"
+	"path/filepath"
+	"runtime"
 
 	"github.com/spf13/viper"
 )
@@ -14,9 +16,11 @@ type Config struct {
 
 // ReadConfig will read config from current directory
 func ReadConfig() Config {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
 	viper.SetDefault("CoinMarketCapKey", "")
 	viper.SetDefault("CryptoCompareKey", "")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(basepath)
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
