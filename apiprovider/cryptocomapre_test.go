@@ -15,7 +15,7 @@ type inputData struct {
 	currency apiprovider.Currency
 }
 
-func TestCryptoCompareGetLatestPriceUsd(t *testing.T) {
+func TestCryptoCompareGetLatestPrice(t *testing.T) {
 	cases := []struct {
 		in   inputData
 		want float64
@@ -66,7 +66,7 @@ func TestCryptoCompareGetLatestPriceUsd(t *testing.T) {
 	}
 }
 
-func TestCryptoCompareGetLatestPriceUsdError(t *testing.T) {
+func TestCryptoCompareGetLatestPriceError(t *testing.T) {
 	errorCodes := []int{
 		400,
 		401,

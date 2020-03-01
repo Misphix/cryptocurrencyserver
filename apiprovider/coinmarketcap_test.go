@@ -10,7 +10,7 @@ import (
 	"github.com/misphix/cryptocurrencyserver/apiprovider"
 )
 
-func TestCoinMarketCapLatestPriceUsd(t *testing.T) {
+func TestCoinMarketCapLatestPrice(t *testing.T) {
 	currencyIDMap := map[apiprovider.Currency]int{
 		apiprovider.Usd: 2781,
 		apiprovider.Twd: 2811,
@@ -92,7 +92,7 @@ func TestCoinMarketCapLatestPriceUsd(t *testing.T) {
 	}
 }
 
-func TestCoinMarketCapLatestPriceUsdError(t *testing.T) {
+func TestCoinMarketCapLatestPriceError(t *testing.T) {
 	errorCodes := []int{
 		400,
 		401,

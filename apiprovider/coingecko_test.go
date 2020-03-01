@@ -9,7 +9,7 @@ import (
 	"github.com/misphix/cryptocurrencyserver/apiprovider"
 )
 
-func TestCoinGeckoGetLatestPriceUsd(t *testing.T) {
+func TestCoinGeckoGetLatestPrice(t *testing.T) {
 	cases := []struct {
 		in   apiprovider.Currency
 		want float64
@@ -62,7 +62,7 @@ func TestCoinGeckoGetLatestPriceUsd(t *testing.T) {
 	}
 }
 
-func TestCoinGeckoGetLatestPriceUsdError(t *testing.T) {
+func TestCoinGeckoGetLatestPriceError(t *testing.T) {
 	errorCodes := []int{
 		400,
 		401,
