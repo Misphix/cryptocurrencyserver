@@ -9,11 +9,13 @@ import (
 // Config is a structure store config value
 type Config struct {
 	CoinMarketCapKey string
+	CryptoCompareKey string
 }
 
 // ReadConfig will read config from current directory
 func ReadConfig() Config {
 	viper.SetDefault("CoinMarketCapKey", "")
+	viper.SetDefault("CryptoCompareKey", "")
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -22,5 +24,5 @@ func ReadConfig() Config {
 		panic(fmt.Errorf("Fatal error: %s", err))
 	}
 
-	return Config{viper.GetString("CoinMarketCapKey")}
+	return Config{CoinMarketCapKey: viper.GetString("CoinMarketCapKey"), CryptoCompareKey: viper.GetString("CryptoCompareKey")}
 }

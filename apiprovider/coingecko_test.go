@@ -34,9 +34,9 @@ func TestCoinGeckoGetLatestPriceUsd(t *testing.T) {
 			}
 
 			if len(query["vs_currencies"]) != 1 {
-				t.Errorf("Parameter vs_currencies number expected 1, actual %d", len(query["ids"]))
+				t.Errorf("Parameter vs_currencies number expected 1, actual %d", len(query["vs_currencies"]))
 			} else if query["vs_currencies"][0] != string(c.in) {
-				t.Errorf("Parameter ids value expected %q, actual %q", string(c.in), query["vs_currencies"][0])
+				t.Errorf("Parameter vs_currencies value expected %q, actual %q", string(c.in), query["vs_currencies"][0])
 			}
 
 			result := map[string]map[string]float64{

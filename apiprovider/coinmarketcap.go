@@ -27,17 +27,17 @@ type Quote struct {
 
 // Data represent a cryptocurrency status
 type Data struct {
-	ID    int
-	Name  string
-	Quote map[string]Quote
+	ID          int
+	Name        string
+	Quote       map[string]Quote
+	LastUpdated time.Time `json:"last_updated"`
 }
 
 // Status represent the status of response
 type Status struct {
 	Timestamp   time.Time
 	Elapsed     int
-	CreditCount int       `json:"credit_count"`
-	LastUpdated time.Time `json:"last_updated"`
+	CreditCount int `json:"credit_count"`
 }
 
 // Response is CoinMarketCap's quotes reponse
