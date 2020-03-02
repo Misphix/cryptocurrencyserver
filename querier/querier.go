@@ -3,6 +3,8 @@ package querier
 import (
 	"errors"
 
+	"github.com/misphix/cryptocurrencyserver/flowcontrol"
+
 	"github.com/misphix/cryptocurrencyserver/apiprovider"
 	"github.com/misphix/cryptocurrencyserver/configreader"
 )
@@ -20,6 +22,8 @@ var lastTimePrice = map[string]float64{
 	"CoinGecko":     0,
 }
 
+var fc = flowcontrol.New(config.MaxSizeOfBucket, config.SecondPerToken, []string{"CoinMarketCap", "CryptoCompare", "CoinGecko"})
+
 // GetLatestPrice will get the latest price of specific provider.
 // It will get last time's result if can't get the latest price
 func GetLatestPrice(p string, currency apiprovider.Currency) (float64, error) {
@@ -29,14 +33,15 @@ func GetLatestPrice(p string, currency apiprovider.Currency) (float64, error) {
 
 	provider, ok := providers[p]
 	if ok {
-		price, err := provider.GetLatestPrice(currency)
+		if fc.AcquirePermission(p) {
+			price, err := provider.GetLatestPrice(currency)
 
-		if err != nil {
-			return getLastTimePrice(p), nil
+			if err == nil {
+				lastTimePrice[p] = price
+			}
 		}
 
-		lastTimePrice[p] = price
-		return price, nil
+		return getLastTimePrice(p), nil
 	}
 	return 0, errors.New("Wrong provider parameter")
 }
