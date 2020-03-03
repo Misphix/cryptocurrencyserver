@@ -22,7 +22,7 @@ func (t TestProvider) GetLatestPrice(currency apiprovider.Currency) (float64, er
 		return ExpectedValue, nil
 	}
 
-	return 147.213, errors.New("")
+	return 0, errors.New("")
 }
 
 func TestQuerierGetLastTimePrice(t *testing.T) {

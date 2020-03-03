@@ -6,9 +6,12 @@ type APIProvider interface {
 	GetLatestPrice(currency Currency) (float64, error)
 }
 
+// Currency it a enum define query currency
 type Currency string
 
 const (
+	// Usd means USD
 	Usd Currency = "usd"
-	Twd          = "twd"
+	// Twd means TWD
+	Twd = "twd"
 )

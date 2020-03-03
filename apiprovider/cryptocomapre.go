@@ -17,7 +17,7 @@ type CryptoComapre struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c CryptoComapre) GetLatestPrice(currency Currency) (float64, error) {
+func (c *CryptoComapre) GetLatestPrice(currency Currency) (float64, error) {
 	request, err := http.NewRequest("GET", c.URL, nil)
 	if err != nil {
 		return 0, err

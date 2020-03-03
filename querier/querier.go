@@ -9,20 +9,31 @@ import (
 	"github.com/misphix/cryptocurrencyserver/configreader"
 )
 
+type providerResource struct {
+	api           apiprovider.APIProvider
+	lastTimePrice float64
+	flowControl   *flowcontrol.FlowController
+}
+
 var config = configreader.ReadConfig()
-var providers = map[string]apiprovider.APIProvider{
-	"CoinMarketCap": apiprovider.CoinMarketCap{URL: apiprovider.CoinMarketCapURL, APIKey: config.CoinMarketCapKey},
-	"CryptoCompare": apiprovider.CryptoComapre{URL: apiprovider.CryptoComapreURL, APIKey: config.CryptoCompareKey},
-	"CoinGecko":     apiprovider.CoinGecko{URL: apiprovider.CoinGeckoURL},
-}
 
-var lastTimePrice = map[string]float64{
-	"CoinMarketCap": 0,
-	"CryptoCompare": 0,
-	"CoinGecko":     0,
+var providerResources = map[string]providerResource{
+	"CoinMarketCap": providerResource{
+		api:           &apiprovider.CoinMarketCap{URL: apiprovider.CoinMarketCapURL, APIKey: config.CoinMarketCapKey},
+		lastTimePrice: 0,
+		flowControl:   flowcontrol.New(config.MaxSizeOfBucket, config.SecondPerToken),
+	},
+	"CryptoCompare": providerResource{
+		api:           &apiprovider.CryptoComapre{URL: apiprovider.CryptoComapreURL, APIKey: config.CryptoCompareKey},
+		lastTimePrice: 0,
+		flowControl:   flowcontrol.New(config.MaxSizeOfBucket, config.SecondPerToken),
+	},
+	"CoinGecko": providerResource{
+		api:           &apiprovider.CoinGecko{URL: apiprovider.CoinGeckoURL},
+		lastTimePrice: 0,
+		flowControl:   flowcontrol.New(config.MaxSizeOfBucket, config.SecondPerToken),
+	},
 }
-
-var fc = flowcontrol.New(config.MaxSizeOfBucket, config.SecondPerToken, []string{"CoinMarketCap", "CryptoCompare", "CoinGecko"})
 
 // GetLatestPrice will get the latest price of specific provider.
 // It will get last time's result if can't get the latest price
@@ -31,17 +42,17 @@ func GetLatestPrice(p string, currency apiprovider.Currency) (float64, error) {
 		p = "CoinGecko"
 	}
 
-	provider, ok := providers[p]
+	provider, ok := providerResources[p]
 	if ok {
-		if fc.AcquirePermission(p) {
-			price, err := provider.GetLatestPrice(currency)
+		if provider.flowControl.AcquirePermission() {
+			price, err := provider.api.GetLatestPrice(currency)
 
 			if err == nil {
-				lastTimePrice[p] = price
+				provider.lastTimePrice = price
 			}
 		}
 
-		return getLastTimePrice(p), nil
+		return provider.lastTimePrice, nil
 	}
 	return 0, errors.New("Wrong provider parameter")
 }
@@ -49,15 +60,9 @@ func GetLatestPrice(p string, currency apiprovider.Currency) (float64, error) {
 // AddTestProvider is a test only function.
 // Do not use it in normal condition.
 func AddTestProvider(name string, provider apiprovider.APIProvider) {
-	providers[name] = provider
-	lastTimePrice[name] = 0
-}
-
-func getLastTimePrice(p string) float64 {
-	price, ok := lastTimePrice[p]
-	if ok {
-		return price
+	providerResources[name] = providerResource{
+		api:           provider,
+		lastTimePrice: 0,
+		flowControl:   flowcontrol.New(0, 0),
 	}
-
-	return 0
 }

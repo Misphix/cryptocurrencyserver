@@ -2,10 +2,8 @@ package apiprovider
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 )
@@ -47,7 +45,7 @@ type Response struct {
 }
 
 // GetLatestPrice will get latest BTC price with USD
-func (c CoinMarketCap) GetLatestPrice(currency Currency) (float64, error) {
+func (c *CoinMarketCap) GetLatestPrice(currency Currency) (float64, error) {
 	currencyID := map[Currency]int{
 		Usd: 2781,
 		Twd: 2811,
@@ -55,8 +53,7 @@ func (c CoinMarketCap) GetLatestPrice(currency Currency) (float64, error) {
 
 	request, err := http.NewRequest("GET", c.URL, nil)
 	if err != nil {
-		log.Print(err)
-		os.Exit(1)
+		return 0, err
 	}
 
 	q := url.Values{}
