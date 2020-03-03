@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// FlowController implemented token bucket flow control method
+// FlowController is an API provider side flow control system.
+// It implemented token bucket flow control method
 type FlowController struct {
 	maxNumber uint
 	interval  uint

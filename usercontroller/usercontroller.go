@@ -4,7 +4,9 @@ import (
 	"time"
 )
 
+// User query record
 type queryRecord struct {
+	// TODO it should be replace by my own api key
 	ip   string
 	time time.Time
 }
