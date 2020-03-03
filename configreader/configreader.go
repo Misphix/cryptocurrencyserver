@@ -10,10 +10,11 @@ import (
 
 // Config is a structure store config value
 type Config struct {
-	CoinMarketCapKey string
-	CryptoCompareKey string
-	SecondPerToken   uint
-	MaxSizeOfBucket  uint
+	CoinMarketCapKey   string
+	CryptoCompareKey   string
+	SecondPerToken     uint
+	MaxSizeOfBucket    uint
+	UserMaxQueryPerDay int
 }
 
 // ReadConfig will read config from current directory
@@ -24,6 +25,7 @@ func ReadConfig() Config {
 	viper.SetDefault("CryptoCompareKey", "")
 	viper.SetDefault("SecondPerToken", 0)
 	viper.SetDefault("MaxSizeOfBucket", 0)
+	viper.SetDefault("UserMaxQueryPerDay", 0)
 	viper.AddConfigPath(basepath)
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -33,9 +35,10 @@ func ReadConfig() Config {
 	}
 
 	return Config{
-		CoinMarketCapKey: viper.GetString("CoinMarketCapKey"),
-		CryptoCompareKey: viper.GetString("CryptoCompareKey"),
-		SecondPerToken:   viper.GetUint("SecondPerToken"),
-		MaxSizeOfBucket:  viper.GetUint("MaxSizeOfBucket"),
+		CoinMarketCapKey:   viper.GetString("CoinMarketCapKey"),
+		CryptoCompareKey:   viper.GetString("CryptoCompareKey"),
+		SecondPerToken:     viper.GetUint("SecondPerToken"),
+		MaxSizeOfBucket:    viper.GetUint("MaxSizeOfBucket"),
+		UserMaxQueryPerDay: viper.GetInt("UserMaxQueryPerDay"),
 	}
 }

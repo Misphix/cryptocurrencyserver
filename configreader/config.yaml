@@ -2,3 +2,4 @@ CoinMarketCapKey: 1cc823b9-41de-49ec-9f93-33d16ebf1860
 CryptoCompareKey: 1d31894efb0b92c411b9fd342f5d02a76a78b51a87e0d26fe798c7cbe15e7def
 SecondPerToken: 288
 MaxSizeOfBucket: 20
+UserMaxQueryPerDay: 100
